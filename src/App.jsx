@@ -21,14 +21,14 @@ if (!API_KEY) {
 
 
 
-const API_OPTIONS =
-{
+const API_OPTIONS = {
   method: 'GET',
   headers: {
-    accept: 'application/json',
-    Authorization: `Bearer ${API_KEY}`
+    accept: 'application/json'
   }
-}
+};
+
+
 
 
 const App = () => {
@@ -42,56 +42,43 @@ const App = () => {
 // by waiting for the user to stop trying for 500ms
   useDebounce(()=> setdebouncedSearchedTerm(searchTerm), 500, [searchTerm] )
                            
-
-const fetchMovies = async(query ='') =>
-{
+const fetchMovies = async (query = '') => {
   setisLoading(true);
   setErrorMessage('');
 
   const endpoint = query
-  ? `${SEARCH_BASE_URL}?query=${encodeURIComponent(query)}`
-  : `${DISCOVER_BASE_URL}?sort_by=popularity.desc`;
+    ? `${SEARCH_BASE_URL}?api_key=${API_KEY}&query=${encodeURIComponent(query)}`
+    : `${DISCOVER_BASE_URL}?api_key=${API_KEY}&sort_by=popularity.desc`;
 
-
-  try{
- 
-
+  try {
     const response = await fetch(endpoint, API_OPTIONS);
 
-    // alert(response);
-
-    if (!response.ok)
-    {
+    if (!response.ok) {
       throw new Error('Failed to fetch movies');
     }
+
     const data = await response.json();
 
-    if(data.response === 'False')
-    {
-      setErrorMessage(data.Error || ' Failed to fetch movies');
+    if (data.response === 'False') {
+      setErrorMessage(data.Error || 'Failed to fetch movies');
       setMovieList([]);
-        return;
-      
+      return;
     }
+
     setMovieList(data.results || []);
 
-    if(query && data.results.length > 0)
-    {
+    if (query && data.results.length > 0) {
       await updateSearchCount(query, data.results[0]);
     }
-  }
 
-  
-  catch(error)
-  {
-
+  } catch (error) {
     console.error(`Error fetching movies: ${error}`);
     setErrorMessage('Error fetching movies. Please try again later.');
-
   } finally {
     setisLoading(false);
   }
-}
+};
+
 
   useEffect( () =>
   {
