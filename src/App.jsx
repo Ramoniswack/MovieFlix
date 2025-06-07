@@ -15,6 +15,11 @@ const SEARCH_BASE_URL = 'https://api.themoviedb.org/3/search/movie';
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
+if (!API_KEY) {
+  console.error("TMDB API key is missing! Check your environment variables.");
+}
+
+
 
 const API_OPTIONS =
 {
